@@ -100,11 +100,19 @@ class OpenRouteHandler {
   RequestBodyOpenApi? _buildRequestBody() {
     final requestBody = this.requestBody ?? handler.bodyParameter?.type;
     if (requestBody == null) return null;
+
     return RequestBodyOpenApi(
       required: true,
-      content: GroupMediaOpenApi(
-        json: MediaOpenApi(schema: schemasRegistry.register(dartType: requestBody)),
-      ),
+      content: switch (requestBody) {
+        _ when requestBody.isDartAsyncStream => const GroupMediaOpenApi(
+          octetStream: MediaOpenApi(
+            schema: SchemaOpenApi(type: TypeOpenApi.string, format: FormatOpenApi.binary),
+          ),
+        ),
+        _ => GroupMediaOpenApi(
+          json: MediaOpenApi(schema: schemasRegistry.register(dartType: requestBody)),
+        ),
+      },
     );
   }
 

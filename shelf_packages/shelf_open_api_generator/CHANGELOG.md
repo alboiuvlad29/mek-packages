@@ -1,4 +1,9 @@
 
+## 3.5.0
+- feat: added support to `Stream<Uint8List>` response
+- feat: added ability to disable open api spec generation via `enabled` flag on `build.yaml` file
+- feat: added `output_path` to specify destination of open api spec files folder
+
 ## 3.4.0
 - fix: do not register private class fields on schema
 - feat: added support to Schema.allOff field analyzing the class extended supertype

@@ -159,6 +159,7 @@ targets:
     builders:
       shelf_open_api_generator:
         options:
+          output_path: 'public' # The output folder path
           info: # See more info on open_api_specification.InfoOpenApi class
             title: 'Api'
             description: 'Shelf open api example'
@@ -169,6 +170,8 @@ targets:
                type: http
                scheme: Bearer
                bearerFormat: JWT
+        release_options:
+          enabled: false
 ```
 
 ## More

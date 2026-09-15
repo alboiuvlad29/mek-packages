@@ -102,15 +102,8 @@ Future<void> generateApi({
 
   var librarySpec = Library(
     (b) => b
-      ..ignoreForFile.addAll([
-        'unnecessary_ignore',
-        'unnecessary_brace_in_string_interps',
-        'no_leading_underscores_for_local_identifiers',
-        'always_use_package_imports',
-        'cast_nullable_to_non_nullable',
-        'unnecessary_cast',
-        'annotate_overrides',
-      ])
+      ..ignoreForFile.add('type=lint')
+      ..directives.add(Directive.import('dart:typed_data'))
       ..directives.add(Directive.part(partPath))
       ..body.add(apiSpec)
       ..body.addAll(dataSpecs),
@@ -120,8 +113,9 @@ Future<void> generateApi({
   final outputDirectory = Directory(options.outputFolder);
   if (!outputDirectory.existsSync()) outputDirectory.createSync(recursive: true);
 
-  final page = formatter.format('${librarySpec.accept(emitter)}');
-  works.add(File('${outputDirectory.path}/$apiFileName').writeAsString(page));
+  var content = formatter.format('${librarySpec.accept(emitter)}');
+  content = '// dart format off\n$content\n// dart format on';
+  works.add(File('${outputDirectory.path}/$apiFileName').writeAsString(content));
 
   for (final plugin in allPlugins) {
     final result = plugin.onFinish();

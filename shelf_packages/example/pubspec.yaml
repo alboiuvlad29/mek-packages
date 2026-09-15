@@ -37,6 +37,7 @@ dev_dependencies:
 
 dependency_overrides:
   open_api_specification: { path: ../open_api_specification }
+
   shelf_open_api: { path: ../shelf_open_api }
   shelf_open_api_generator: { path: ../shelf_open_api_generator }
 

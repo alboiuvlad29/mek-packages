@@ -23,6 +23,11 @@ paths:
       responses:
         200:
           description: "Operation completed!"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
     post:
       tags:
         - ChatsController
@@ -80,6 +85,49 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/MessageDto"
+  /api-v1/files:
+    get:
+      tags:
+        - FilesController
+      summary: download
+      operationId: download
+      responses:
+        200:
+          description: "Operation completed!"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+    post:
+      tags:
+        - FilesController
+      summary: upload
+      operationId: upload
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: "Operation completed!"
+  /api-v1/files/via-response:
+    get:
+      tags:
+        - FilesController
+      summary: downloadViaResponse
+      operationId: downloadViaResponse
+      responses:
+        200:
+          description: "Operation completed!"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
 components:
   schemas:
     ChatVisibility:
@@ -125,3 +173,4 @@ components:
 tags:
   - name: ChatsController
   - name: MessagesController
+  - name: FilesController

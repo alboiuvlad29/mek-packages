@@ -1,3 +1,9 @@
+## 1.5.0
+- feat: added support to `application/octet-stream` content type
+- chore: disable linting and formatting on generated file 
+
+## 1.4.1
+- feat: added support to sealed class and discriminator
 
 ## 1.4.1
 - feat: added support to sealed class and discriminator
