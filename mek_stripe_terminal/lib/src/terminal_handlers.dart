@@ -43,7 +43,13 @@ class TerminalHandlers implements TerminalHandlersApi {
   }
 
   @override
-  Future<String> requestConnectionToken() async => await fetchToken!();
+  Future<String> requestConnectionToken() async {
+    final fetchToken = this.fetchToken;
+    if (fetchToken == null) {
+      throw StateError('No fetchToken: the terminal was initialized for Apps on Devices');
+    }
+    return await fetchToken();
+  }
 
   @override
   void connectionStatusChange(ConnectionStatus connectionStatus) =>

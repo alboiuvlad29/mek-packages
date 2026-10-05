@@ -5167,7 +5167,10 @@ class TerminalPlatformApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<void> initialize({required bool shouldPrintLogs}) async {
+  Future<void> initialize({
+    required bool shouldPrintLogs,
+    required bool useAppsOnDevicesConnectionTokenProvider,
+  }) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.mek_stripe_terminal.TerminalPlatformApi.initialize$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -5175,7 +5178,10 @@ class TerminalPlatformApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shouldPrintLogs]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      shouldPrintLogs,
+      useAppsOnDevicesConnectionTokenProvider,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);

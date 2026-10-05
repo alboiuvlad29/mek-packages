@@ -4,6 +4,8 @@ import ClearCachedCredentialsResultApi
 import android.content.Context
 import com.stripe.stripeterminal.Terminal
 import com.stripe.stripeterminal.TerminalApplicationDelegate
+import com.stripe.stripeterminal.appsondevices.AppsOnDevicesConnectionTokenProvider
+import com.stripe.stripeterminal.external.ConnectionTokenProviderForAppsOnDevices
 import com.stripe.stripeterminal.external.callable.Callback
 import com.stripe.stripeterminal.external.callable.Cancelable
 import com.stripe.stripeterminal.external.callable.LocationListCallback
@@ -112,7 +114,8 @@ class TerminalPlatformPlugin(
 
     private val terminal: Terminal get() = Terminal.getInstance()
 
-    override fun initialize(shouldPrintLogs: Boolean) {
+    @OptIn(ConnectionTokenProviderForAppsOnDevices::class)
+    override fun initialize(shouldPrintLogs: Boolean, useAppsOnDevicesConnectionTokenProvider: Boolean) {
         // If a hot restart is performed in flutter the terminal is already initialized but we need to
         // clean it up
         if (Terminal.isInitialized()) {
@@ -124,7 +127,7 @@ class TerminalPlatformPlugin(
         Terminal.init(
             applicationContext,
             if (shouldPrintLogs) LogLevel.VERBOSE else LogLevel.NONE,
-            delegate,
+            if (useAppsOnDevicesConnectionTokenProvider) AppsOnDevicesConnectionTokenProvider() else delegate,
             delegate,
             null
         )
