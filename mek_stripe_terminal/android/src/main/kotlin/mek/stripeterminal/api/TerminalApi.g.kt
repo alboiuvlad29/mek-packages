@@ -5294,7 +5294,7 @@ val TerminalApiPigeonMethodCodec = StandardMethodCodec(TerminalApiPigeonCodec())
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface TerminalPlatformApi {
-  fun initialize(shouldPrintLogs: Boolean)
+  fun initialize(shouldPrintLogs: Boolean, useAppsOnDevicesConnectionTokenProvider: Boolean)
   fun clearCachedCredentials(): ClearCachedCredentialsResultApi
   fun getConnectionStatus(): ConnectionStatusApi
   fun supportsReadersOfType(deviceType: DeviceTypeApi?, discoveryConfiguration: DiscoveryConfigurationApi): Boolean
@@ -5343,8 +5343,9 @@ interface TerminalPlatformApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val shouldPrintLogsArg = args[0] as Boolean
+            val useAppsOnDevicesConnectionTokenProviderArg = args[1] as Boolean
             val wrapped: List<Any?> = try {
-              api.initialize(shouldPrintLogsArg)
+              api.initialize(shouldPrintLogsArg, useAppsOnDevicesConnectionTokenProviderArg)
               listOf(null)
             } catch (exception: Throwable) {
               TerminalApiPigeonUtils.wrapError(exception)

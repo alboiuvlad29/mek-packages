@@ -19,7 +19,10 @@ import 'terminal_exception.dart';
 
 @HostApi()
 abstract class TerminalPlatformApi {
-  void initialize({required bool shouldPrintLogs});
+  void initialize({
+    required bool shouldPrintLogs,
+    required bool useAppsOnDevicesConnectionTokenProvider,
+  });
 
   ClearCachedCredentialsResultApi clearCachedCredentials();
 

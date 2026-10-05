@@ -40,7 +40,10 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
         TerminalPlatformApiSetup.setUp(binaryMessenger: _binaryMessenger, api: nil)
     }
     
-    func initialize(shouldPrintLogs: Bool) throws {
+    func initialize(shouldPrintLogs: Bool, useAppsOnDevicesConnectionTokenProvider: Bool) throws {
+        if useAppsOnDevicesConnectionTokenProvider {
+            throw createPigeonError("unsupported", "Apps on Devices is only available on Android")
+        }
         // If a hot restart is performed in flutter the terminal is already initialized but we need to clean it up
         if Terminal.isInitialized() {
             _clean()

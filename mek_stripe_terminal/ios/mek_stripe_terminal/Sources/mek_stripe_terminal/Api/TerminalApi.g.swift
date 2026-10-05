@@ -4680,7 +4680,7 @@ var terminalApiPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: Term
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol TerminalPlatformApi {
-  func initialize(shouldPrintLogs: Bool) throws
+  func initialize(shouldPrintLogs: Bool, useAppsOnDevicesConnectionTokenProvider: Bool) throws
   func clearCachedCredentials() throws -> ClearCachedCredentialsResultApi
   func getConnectionStatus() throws -> ConnectionStatusApi
   func supportsReadersOfType(deviceType: DeviceTypeApi?, discoveryConfiguration: DiscoveryConfigurationApi) throws -> Bool
@@ -4726,8 +4726,9 @@ class TerminalPlatformApiSetup {
       initializeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let shouldPrintLogsArg = args[0] as! Bool
+        let useAppsOnDevicesConnectionTokenProviderArg = args[1] as! Bool
         do {
-          try api.initialize(shouldPrintLogs: shouldPrintLogsArg)
+          try api.initialize(shouldPrintLogs: shouldPrintLogsArg, useAppsOnDevicesConnectionTokenProvider: useAppsOnDevicesConnectionTokenProviderArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))

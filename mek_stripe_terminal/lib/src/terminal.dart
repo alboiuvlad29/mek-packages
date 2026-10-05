@@ -47,6 +47,20 @@ class Terminal {
     /// A callback function that returns a Future which resolves to a connection token from your backend
     /// Check out more at https://stripe.com/docs/terminal/payments/setup-integration#connection-token
     required Future<String> Function() fetchToken,
+  }) => _init(shouldPrintLogs: shouldPrintLogs, fetchToken: fetchToken);
+
+  /// Only Android. Initializes the terminal SDK for an app running on a Stripe smart reader with
+  /// Apps on Devices. The Stripe Reader app on the device provides the connection tokens, so no
+  /// backend is needed.
+  /// Check out more at https://docs.stripe.com/terminal/features/apps-on-devices/build
+  static Future<void> initForAppsOnDevices({bool shouldPrintLogs = false}) =>
+      _init(shouldPrintLogs: shouldPrintLogs, fetchToken: null);
+
+  static bool _isInitializing = false;
+
+  static Future<void> _init({
+    required bool shouldPrintLogs,
+    required Future<String> Function()? fetchToken,
   }) async {
     if (_instance != null) {
       throw StateError(
@@ -54,18 +68,24 @@ class Terminal {
         'Retrieve it with [Terminal.instance] static getter or use [Terminal.clearCachedCredentials] method to re-fetch the token.',
       );
     }
-    if (_handlers.fetchToken != null) {
+    if (_isInitializing) {
       throw StateError('Already initializing!\nWait a initialization!');
     }
 
+    _isInitializing = true;
     _handlers.fetchToken = fetchToken;
     try {
-      await _platform.initialize(shouldPrintLogs: shouldPrintLogs);
+      await _platform.initialize(
+        shouldPrintLogs: shouldPrintLogs,
+        useAppsOnDevicesConnectionTokenProvider: fetchToken == null,
+      );
       _instance = Terminal._();
     } catch (exception) {
       _handlers.fetchToken = null;
       if (exception is PlatformException) _throwIfIsHostException(exception);
       rethrow;
+    } finally {
+      _isInitializing = false;
     }
   }
 
