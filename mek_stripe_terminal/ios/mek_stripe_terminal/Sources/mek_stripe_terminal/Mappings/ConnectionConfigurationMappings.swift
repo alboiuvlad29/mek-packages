@@ -33,7 +33,7 @@ extension ConnectionConfigurationApi {
         case _ as UsbConnectionConfigurationApi:
             return nil
         default:
-            fatalError()
+            return nil
         }
     }
 }

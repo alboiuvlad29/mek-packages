@@ -6,7 +6,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     private static var shared: TerminalPlugin?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let plugin = TerminalPlugin(registrar.viewController, registrar.messenger())
+        let plugin = TerminalPlugin(registrar.messenger())
         plugin.setUpAndRegister()
         TerminalPlugin.shared = plugin;
     }
@@ -17,9 +17,9 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     private let _terminalDelegate: TerminalDelegatePlugin
     private let _discoveryDelegate: DiscoveryDelegatePlugin
 
-    init(_ viewController: UIViewController?, _ binaryMessenger: FlutterBinaryMessenger) {
+    init(_ binaryMessenger: FlutterBinaryMessenger) {
         self._binaryMessenger = binaryMessenger
-        self._proximityReader = ProximityReaderPlugin(viewController)
+        self._proximityReader = ProximityReaderPlugin()
         self._handlers = TerminalHandlersApi(binaryMessenger: binaryMessenger)
         self._terminalDelegate = TerminalDelegatePlugin(_handlers)
         self._discoveryDelegate = DiscoveryDelegatePlugin()
@@ -129,7 +129,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     }
     
     func stopEasyConnect(operationId: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
-        completion(.failure(createPigeonError(".unimplemented", "Unimplemented 'stopEasyConnect' method")))
+        completion(.success(()))
     }
     
     func getConnectedReader() throws -> ReaderApi? {
@@ -262,7 +262,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     
     func stopProcessPaymentIntent(operationId: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
         handleResult(completion) {
-            try await self._processPaymentIntentCancellables.removeValue(forKey: operationId)?.cancel()
+            try await self._cancel(self._processPaymentIntentCancellables.removeValue(forKey: operationId))
         }
     }
     
@@ -340,7 +340,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     
     func stopProcessSetupIntent(operationId: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
         handleResult(completion) {
-            try await self._cancelablesCollectSetupIntentPaymentMethod.removeValue(forKey: operationId)?.cancel()
+            try await self._cancel(self._cancelablesCollectSetupIntentPaymentMethod.removeValue(forKey: operationId))
         }
     }
     
@@ -384,7 +384,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
                 )
             params.setMetadata(metadata)
             reverseTransfer.apply(params.setReverseTransfer)
-            params.setMetadata(metadata)
+            refundApplicationFee.apply(params.setRefundApplicationFee)
             
             let config = CollectRefundConfigurationBuilder()
                 .setCustomerCancellation(customerCancellationEnabled ? .enableIfAvailable : .disableIfAvailable)
@@ -405,7 +405,7 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     
     func stopProcessRefund(operationId: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
         handleResult(completion) {
-            try await self._cancelablesCollectRefundPaymentMethod.removeValue(forKey: operationId)?.cancel()
+            try await self._cancel(self._cancelablesCollectRefundPaymentMethod.removeValue(forKey: operationId))
         }
     }
 
@@ -438,6 +438,15 @@ public class TerminalPlugin: NSObject, FlutterPlugin, TerminalPlatformApi {
     }
     
 // MARK: - PRIVATE METHODS
+    
+    private func _cancel(_ cancelable: Cancelable?) async throws {
+        guard let cancelable, !cancelable.completed else { return }
+        do {
+            try await cancelable.cancel()
+        } catch let error as NSError where error.domain == "com.stripe-terminal"
+            && error.code == ErrorCode.Code.cancelFailedAlreadyCompleted.rawValue {
+        }
+    }
     
     private func _clean() {
         if (Terminal.shared.connectedReader != nil) { Terminal.shared.disconnectReader  { error in } }

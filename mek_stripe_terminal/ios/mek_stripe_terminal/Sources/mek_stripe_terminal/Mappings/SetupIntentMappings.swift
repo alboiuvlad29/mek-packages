@@ -23,7 +23,7 @@ extension SetupIntentUsage {
         case .onSession:
             return .onSession
         @unknown default:
-            fatalError()
+            return .offSession
         }
     }
 }
@@ -44,7 +44,7 @@ extension SetupIntentStatus {
         case .succeeded:
             return .succeeded
         @unknown default:
-            fatalError()
+            return .processing
         }
     }
 }
@@ -66,7 +66,7 @@ extension SetupAttempt {
         case "abandoned":
             statusApi = .abandoned
         default:
-            fatalError()
+            statusApi = .processing
         }
         return SetupAttemptApi(
             id : stripeId, applicationId: application,
@@ -121,8 +121,6 @@ extension AllowRedisplayApi {
             return .limited
         case .unspecified:
             return .unspecified
-        @unknown default:
-            fatalError()
         }
     }
 }

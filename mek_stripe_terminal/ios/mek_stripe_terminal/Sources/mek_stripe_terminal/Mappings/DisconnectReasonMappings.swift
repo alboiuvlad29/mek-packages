@@ -25,7 +25,7 @@ extension DisconnectReason {
         case .bluetoothSignalLost:
             return .bluetoothSignalLost
         @unknown default:
-            fatalError("WTF")
+            return .unknown
         }
     }
 }

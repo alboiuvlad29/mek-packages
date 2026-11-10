@@ -59,7 +59,7 @@ extension LocationStatus {
         case .notSet:
             return .notSet
         @unknown default:
-            fatalError("WTF")
+            return nil
         }
     }
 }
@@ -74,13 +74,13 @@ extension ReaderNetworkStatus {
         case .unknown:
             return nil
         @unknown default:
-            fatalError("ReaderNetworkStatus \(self) not supported.")
+            return nil
         }
     }
 }
 
 extension DeviceType {
-    func toApi() -> DeviceTypeApi {
+    func toApi() -> DeviceTypeApi? {
         switch self {
         case .chipper1X:
             return .chipper1X
@@ -143,26 +143,26 @@ extension DeviceType {
         case .stripeT610DevKit:
             return .stripeT610Devkit
         @unknown default:
-            fatalError("DeviceType->DeviceTypeApi \(self) not supported.")
+            return nil
         }
     }
 }
 
 extension ReaderEvent {
-    func toApi() -> ReaderEventApi {
+    func toApi() -> ReaderEventApi? {
         switch (self) {
         case .cardInserted:
             return .cardInserted
         case .cardRemoved:
             return .cardRemoved
         @unknown default:
-            fatalError("ReaderEvent \(self) not supported.")
+            return nil
         }
     }
 }
 
 extension ReaderDisplayMessage {
-    func toApi() -> ReaderDisplayMessageApi {
+    func toApi() -> ReaderDisplayMessageApi? {
         switch (self) {
         case .retryCard:
             return .retryCard
@@ -183,7 +183,7 @@ extension ReaderDisplayMessage {
         case .cardRemovedTooEarly:
             return .cardRemovedTooEarly
         @unknown default:
-            fatalError("ReaderDisplayMessage \(self) not supported.")
+            return nil
         }
     }
 }
@@ -210,7 +210,7 @@ extension BatteryStatus {
         case .unknown:
             return nil
         @unknown default:
-            fatalError("BatteryStatys \(self) not supported.")
+            return nil
         }
     }
 }
@@ -252,7 +252,7 @@ extension UpdateTimeEstimate {
         case .estimate5To15Minutes:
             return .fiveToFifteenMinutes
         @unknown default:
-            fatalError("UpdateTimeEstimate \(self) not supported.")
+            return .fiveToFifteenMinutes
         }
     }
 }
@@ -286,7 +286,7 @@ extension DiscoveryConfigurationApi {
         case _ as UsbDiscoveryConfigurationApi:
             return nil
         default:
-            fatalError()
+            return nil
         }
     }
     
@@ -305,7 +305,7 @@ extension DiscoveryConfigurationApi {
         case _ as UsbDiscoveryConfigurationApi:
             return nil
         default:
-            fatalError()
+            return nil
         }
     }
     
@@ -324,7 +324,7 @@ extension DiscoveryConfigurationApi {
         case _ as UsbDiscoveryConfigurationApi:
             return false
         default:
-            fatalError()
+            return false
         }
     }
 }
@@ -438,7 +438,7 @@ extension ConnectionStatus {
         case .reconnecting:
             return .reconnecting
         @unknown default:
-            fatalError("ConnectionStatus->ConnectionStatusApi \(self) not supported.")
+            return .notConnected
         }
     }
 }

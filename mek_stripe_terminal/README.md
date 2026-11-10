@@ -99,6 +99,25 @@ After you add an entitlements file to your app build target, add the following:
 
 [See official doc for more details](https://docs.stripe.com/terminal/payments/setup-integration?terminal-sdk-platform=ios)
 
+### Android Application
+
+The plugin does not call `TerminalApplicationDelegate.onCreate`. Your `Application` must call it in `onCreate`,
+skipping the Tap to Pay process. Add `com.stripe:stripeterminal-core` and `com.stripe:stripeterminal-taptopay`
+(same version as the plugin) to your app dependencies and register the class in `AndroidManifest.xml`
+(`<application android:name=".MyApplication">`).
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        if (TapToPay.isInTapToPayProcess()) return
+        TerminalApplicationDelegate.onCreate(this)
+    }
+}
+```
+
+[See official doc for more details](https://docs.stripe.com/terminal/payments/setup-integration?terminal-sdk-platform=android)
+
 ## Known bugs
 
 - Android: https://github.com/stripe/stripe-terminal-android/issues/433

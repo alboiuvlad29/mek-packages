@@ -56,7 +56,7 @@ extension PaymentIntentStatus {
         case .requiresAction:
             return .requiresAction
         @unknown default:
-            fatalError("Not supported payment intent status: \(self)")
+            return .processing
         }
     }
 }
@@ -69,7 +69,7 @@ extension CaptureMethod {
         case .automatic:
             return CaptureMethodApi.automatic
         @unknown default:
-            fatalError("Not supported CaptureMethodApi '\(self)'")
+            return CaptureMethodApi.automatic
         }
     }
 }
@@ -166,7 +166,7 @@ extension PaymentStatus {
         case .processing:
             return .processing
         @unknown default:
-            fatalError("WTF")
+            return .notReady
         }
     }
 }

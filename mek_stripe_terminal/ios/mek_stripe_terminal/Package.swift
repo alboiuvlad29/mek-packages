@@ -16,7 +16,7 @@ let package = Package(
 
         .package(
             url: "https://github.com/stripe/stripe-terminal-ios.git",
-            from: "5.6.0"
+            exact: "5.8.1"
         )
     ],
     targets: [

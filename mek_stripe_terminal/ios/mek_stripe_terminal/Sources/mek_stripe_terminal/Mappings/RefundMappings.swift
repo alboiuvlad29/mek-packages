@@ -30,7 +30,7 @@ extension RefundStatus {
         case .unknown:
             return nil
         @unknown default:
-            fatalError()
+            return nil
         }
     }
 }

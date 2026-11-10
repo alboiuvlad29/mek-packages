@@ -11,7 +11,7 @@ extension ChargeStatus {
         case ChargeStatus.succeeded:
             return ChargeStatusApi.succeeded
         @unknown default:
-            fatalError("Unkown charge status")
+            return ChargeStatusApi.pending
         }
     }
 }

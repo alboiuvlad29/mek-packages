@@ -3,7 +3,6 @@ package mek.stripeterminal
 import ClearCachedCredentialsResultApi
 import android.content.Context
 import com.stripe.stripeterminal.Terminal
-import com.stripe.stripeterminal.TerminalApplicationDelegate
 import com.stripe.stripeterminal.appsondevices.AppsOnDevicesConnectionTokenProvider
 import com.stripe.stripeterminal.external.ConnectionTokenProviderForAppsOnDevices
 import com.stripe.stripeterminal.external.callable.Callback
@@ -94,9 +93,7 @@ class TerminalPlugin : FlutterPlugin, ActivityAware {
         }
     }
 
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        TerminalApplicationDelegate.onCreate(binding.activity.application)
-    }
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {}
 
     override fun onDetachedFromActivityForConfigChanges() {}
 
@@ -216,11 +213,7 @@ class TerminalPlatformPlugin(
         operationId: Long,
         callback: (Result<Unit>) -> Unit
     ) {
-        easyConnectCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler<Unit>(callback), Callback {
-                override fun onSuccess() = callback(Result.success(Unit))
-            }
-        )
+        cancel(easyConnectCancelables.remove(operationId), callback)
     }
 
     override fun getConnectedReader(): ReaderApi? = terminal.connectedReader?.toApi()
@@ -399,11 +392,7 @@ class TerminalPlatformPlugin(
         operationId: Long,
         callback: (Result<Unit>) -> Unit
     ) {
-        processPaymentIntentCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler<Unit>(callback), Callback {
-                override fun onSuccess() = callback(Result.success(Unit))
-            }
-        )
+        cancel(processPaymentIntentCancelables.remove(operationId), callback)
     }
 
     override fun cancelPaymentIntent(
@@ -508,11 +497,7 @@ class TerminalPlatformPlugin(
         operationId: Long,
         callback: (Result<Unit>) -> Unit
     ) {
-        processSetupIntentCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler<Unit>(callback), Callback {
-                override fun onSuccess() = callback(Result.success(Unit))
-            }
-        )
+        cancel(processSetupIntentCancelables.remove(operationId), callback)
     }
 
     override fun cancelSetupIntent(
@@ -589,11 +574,7 @@ class TerminalPlatformPlugin(
         operationId: Long,
         callback: (Result<Unit>) -> Unit
     ) {
-        processRefundCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler<Unit>(callback), Callback {
-                override fun onSuccess() = callback(Result.success(Unit))
-            }
-        )
+        cancel(processRefundCancelables.remove(operationId), callback)
     }
     // endregion
 
@@ -633,6 +614,26 @@ class TerminalPlatformPlugin(
     // endregion
 
     // ======================== INTERNAL METHODS
+
+    private fun cancel(cancelable: Cancelable?, callback: (Result<Unit>) -> Unit) {
+        if (cancelable == null || cancelable.isCompleted) {
+            callback(Result.success(Unit))
+            return
+        }
+        cancelable.cancel(
+            object : TerminalErrorHandler<Unit>(callback), Callback {
+                override fun onSuccess() = callback(Result.success(Unit))
+
+                override fun onFailure(e: TerminalException) {
+                    if (cancelable.isCompleted) {
+                        runOnMainThread { callback(Result.success(Unit)) }
+                    } else {
+                        super.onFailure(e)
+                    }
+                }
+            }
+        )
+    }
 
     private fun buildRefundParameters(
         chargeId: String?,

@@ -319,7 +319,7 @@ extension NSError {
         case .tapToPayInternalNetworkError:
             return .internalNetworkError
         @unknown default:
-            fatalError()
+            return nil
         }
     }
 }

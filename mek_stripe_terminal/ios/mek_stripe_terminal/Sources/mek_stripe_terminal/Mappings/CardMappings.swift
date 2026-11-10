@@ -38,7 +38,7 @@ extension CardBrand {
         case .eftposAu:
             return .eftposAu
         @unknown default:
-            fatalError("WTF")
+            return nil
         }
     }
 }
@@ -55,7 +55,7 @@ extension CardFundingType {
         case .other:
             return nil
         @unknown default:
-            fatalError("WTF")
+            return nil
         }
     }
 }
@@ -90,7 +90,7 @@ extension IncrementalAuthorizationStatus {
         case .supported:
             return .supported
         @unknown default:
-            fatalError()
+            return nil
         }
     }
 }
@@ -98,7 +98,7 @@ extension IncrementalAuthorizationStatus {
 extension SCPNetworks {
     func toApi() -> CardNetworksApi {
         return CardNetworksApi(
-            available: available?.map { CardBrand(rawValue: Int(truncating: $0))!.toApi()! } ?? [],
+            available: available?.compactMap { CardBrand(rawValue: Int(truncating: $0))?.toApi() } ?? [],
             preferred: nil
         )
     }

@@ -595,6 +595,13 @@ enum TerminalExceptionCodeApi {
 
   /// Only Android. Simulated offline mode is not available in live mode.
   simulatedOfflineModeNotAvailableInLivemode,
+
+  /// Only Android. The Tap to Pay library (`stripeterminal-taptopay`) is not included in the app.
+  tapToPayLibraryNotIncluded,
+
+  /// Only Android. A prerequisite for the operation is missing, e.g. a required permission or
+  /// a required Tap to Pay dependency.
+  missingPrerequisite,
 }
 
 class TerminalExceptionApi {

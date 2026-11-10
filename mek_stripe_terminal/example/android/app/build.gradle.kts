@@ -43,3 +43,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation("com.stripe:stripeterminal-core:5.8.1")
+    implementation("com.stripe:stripeterminal-taptopay:5.8.1")
+}

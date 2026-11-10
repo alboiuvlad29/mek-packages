@@ -90,14 +90,16 @@ class ReaderDelegatePlugin: NSObject, ReaderDelegate, MobileReaderDelegate, Inte
     }
     
     func reader(_ reader: Reader, didRequestReaderDisplayMessage displayMessage: ReaderDisplayMessage) {
+        guard let message = displayMessage.toApi() else { return }
         DispatchQueue.main.async {
-            self._handlers.readerRequestDisplayMessage(message: displayMessage.toApi(), completion: logUnexpectedResultError)
+            self._handlers.readerRequestDisplayMessage(message: message, completion: logUnexpectedResultError)
         }
     }
         
     func reader(_ reader: Reader, didReportReaderEvent event: ReaderEvent, info: Dictionary<AnyHashable, Any>?) {
+        guard let event = event.toApi() else { return }
         DispatchQueue.main.async {
-            self._handlers.readerReportEvent(event: event.toApi(), completion: logUnexpectedResultError)
+            self._handlers.readerReportEvent(event: event, completion: logUnexpectedResultError)
         }
     }
     

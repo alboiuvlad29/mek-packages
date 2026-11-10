@@ -473,7 +473,7 @@ class Terminal {
     bool? refundApplicationFee,
     bool customerCancellationEnabled = true,
   }) {
-    if (chargeId != null || (paymentIntentId != null && paymentIntentClientSecret != null)) {
+    if (chargeId == null && (paymentIntentId == null || paymentIntentClientSecret == null)) {
       throw ArgumentError(
         'Either chargeId or (paymentIntentId and paymentIntentClientSecret) params must be provided to refund.',
       );
